@@ -34,7 +34,7 @@ TARGET_MODULES = [
     "q_proj",
     "v_proj",
 ]
-DATA_PATH = "alpaca_data_cleaned.json"
+DATA_PATH = "max.json"
 
 device_map = "auto"
 world_size = int(os.environ.get('WORLD_SIZE', 1))
@@ -43,16 +43,17 @@ if ddp:
     device_map = {'':int(os.environ.get('LOCAL_RANK') or 0)}
     GRADIENT_ACCUMULATION_STEPS = GRADIENT_ACCUMULATION_STEPS // world_size
 
-model = LlamaForCausalLM.from_pretrained(
-    "decapoda-research/llama-7b-hf",
-    load_in_8bit=True,
-    device_map=device_map,
-)
+# model = LlamaForCausalLM.from_pretrained(
+#     "decapoda-research/llama-7b-hf",
+#     load_in_8bit=True,
+#     device_map=device_map,
+# )
 tokenizer = LlamaTokenizer.from_pretrained(
     "decapoda-research/llama-7b-hf", add_eos_token=True
 )
-
-model = prepare_model_for_int8_training(model)
+if tokenizer.pad_token is None:
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+# model = prepare_model_for_int8_training(model)
 
 config = LoraConfig(
     r=LORA_R,
@@ -62,8 +63,8 @@ config = LoraConfig(
     bias="none",
     task_type="CAUSAL_LM",
 )
-model = get_peft_model(model, config)
-tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
+# model = get_peft_model(model, config)
+# tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
 data = load_dataset("json", data_files=DATA_PATH)
 
 train_val = data["train"].train_test_split(
@@ -75,7 +76,19 @@ val_data = train_val["test"]
 
 def generate_prompt(data_point):
     # sorry about the formatting disaster gotta move fast
-    if data_point["input"]:
+    if "Context" in data_point.keys():
+        return f"""Below is a part of a conversation you and a human talking about a subject specified in Knowldge. 
+
+### Knowledge
+{data_point["Knowledge"]}
+
+### Context
+{data_point["Context"]}
+
+### Response
+{data_point["Response"]}
+        """
+    elif data_point["input"]:
         return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
 
 ### Instruction:
@@ -94,6 +107,7 @@ def generate_prompt(data_point):
 
 ### Response:
 {data_point["output"]}"""
+    
 
 
 def tokenize(prompt):
