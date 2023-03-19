@@ -192,7 +192,19 @@ def train(
 
 def generate_prompt(data_point):
     # sorry about the formatting disaster gotta move fast
-    if data_point["input"]:
+    if "Context" in data_point.keys():
+        return f"""Below is a part of a conversation you and a human talking about a subject specified in Knowldge. 
+
+### Knowledge
+{data_point["Knowledge"]}
+
+### Context
+{data_point["Context"]}
+
+### Response
+{data_point["Response"]}
+        """
+    elif data_point["input"]:
         return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
 
 ### Instruction:
@@ -211,6 +223,7 @@ def generate_prompt(data_point):
 
 ### Response:
 {data_point["output"]}"""
+    
 
 
 if __name__ == "__main__":
