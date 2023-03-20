@@ -43,17 +43,17 @@ if ddp:
     device_map = {'':int(os.environ.get('LOCAL_RANK') or 0)}
     GRADIENT_ACCUMULATION_STEPS = GRADIENT_ACCUMULATION_STEPS // world_size
 
-# model = LlamaForCausalLM.from_pretrained(
-#     "decapoda-research/llama-7b-hf",
-#     load_in_8bit=True,
-#     device_map=device_map,
-# )
+model = LlamaForCausalLM.from_pretrained(
+    "decapoda-research/llama-30b-hf",
+    load_in_8bit=True,
+    device_map=device_map,
+)
 tokenizer = LlamaTokenizer.from_pretrained(
     "decapoda-research/llama-30b-hf", add_eos_token=True
 )
 if tokenizer.pad_token is None:
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-# model = prepare_model_for_int8_training(model)
+model = prepare_model_for_int8_training(model)
 
 config = LoraConfig(
     r=LORA_R,
@@ -63,8 +63,8 @@ config = LoraConfig(
     bias="none",
     task_type="CAUSAL_LM",
 )
-# model = get_peft_model(model, config)
-# tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
+model = get_peft_model(model, config)
+tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
 data = load_dataset("json", data_files=DATA_PATH)
 
 train_val = data["train"].train_test_split(

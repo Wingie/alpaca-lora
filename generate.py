@@ -10,8 +10,8 @@ from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig
 
 tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
 
-BASE_MODEL = "decapoda-research/llama-7b-hf"
-LORA_WEIGHTS = "tloen/alpaca-lora-7b"
+BASE_MODEL = "decapoda-research/llama-30b-hf"
+LORA_WEIGHTS = "tloen/alpaca-lora-30b"
 
 if torch.cuda.is_available():
     device = "cuda"
