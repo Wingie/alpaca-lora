@@ -11,6 +11,7 @@ assert (
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
 from transformers import LlamaTokenizer, LlamaForCausalLM
 
+<<<<<<< HEAD
 BASE_MODEL = None
 assert (
     BASE_MODEL
@@ -20,17 +21,29 @@ tokenizer = LlamaTokenizer.from_pretrained(BASE_MODEL)
 
 base_model = LlamaForCausalLM.from_pretrained(
     BASE_MODEL,
+=======
+tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-30b-hf",device_map={'':0})
+
+tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-30b-hf")
+
+base_model = LlamaForCausalLM.from_pretrained(
+    "decapoda-research/llama-30b-hf",
+>>>>>>> 868d1be (lora 30b alpaca)
     load_in_8bit=False,
     torch_dtype=torch.float16,
     device_map={"": "cpu"},
 )
 
+first_weight = base_model.model.layers[0].self_attn.q_proj.weight
+first_weight_old = first_weight.clone()
+
 lora_model = PeftModel.from_pretrained(
     base_model,
-    "tloen/alpaca-lora-7b",
+    "baseten/alpaca-30b",
     device_map={"": "cpu"},
     torch_dtype=torch.float16,
 )
+
 
 # merge weights
 for layer in lora_model.base_model.model.model.layers:
