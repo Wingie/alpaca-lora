@@ -53,7 +53,8 @@ for layer in lora_model.base_model.model.model.layers:
 lora_model.train(False)
 
 lora_model_sd = lora_model.state_dict()
-
+# for 30B?
+# { "dim": 6656, "multiple_of": 256, "n_heads": 52, "n_layers": 60, "norm_eps": 1e-6, "vocab_size": -1 }
 params = {
     "dim": 4096,
     "multiple_of": 256,
