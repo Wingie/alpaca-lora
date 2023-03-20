@@ -20,7 +20,7 @@ from peft import (
 
 
 # optimized for RTX 4090. for larger GPUs, increase some of these?
-MICRO_BATCH_SIZE = 4  # this could actually be 5 but i like powers of 2
+MICRO_BATCH_SIZE = 16  # this could actually be 5 but i like powers of 2
 BATCH_SIZE = 128
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
 EPOCHS = 3  # we don't always need 3 tbh
@@ -49,7 +49,7 @@ if ddp:
 #     device_map=device_map,
 # )
 tokenizer = LlamaTokenizer.from_pretrained(
-    "decapoda-research/llama-7b-hf", add_eos_token=True
+    "decapoda-research/llama-30b-hf", add_eos_token=True
 )
 if tokenizer.pad_token is None:
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
