@@ -13,7 +13,6 @@ from transformers import LlamaTokenizer, LlamaForCausalLM
 BASE_MODEL = "decapoda-research/llama-30b-hf"
 LORA_WEIGHTS = "baseten/alpaca-30b"
 
-<<<<<<< HEAD
 BASE_MODEL = None
 assert (
     BASE_MODEL
@@ -23,12 +22,6 @@ tokenizer = LlamaTokenizer.from_pretrained(BASE_MODEL)
 
 base_model = LlamaForCausalLM.from_pretrained(
     BASE_MODEL,
-=======
-tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-30b-hf")
-
-base_model = LlamaForCausalLM.from_pretrained(
-    "decapoda-research/llama-30b-hf",
->>>>>>> 868d1be (lora 30b alpaca)
     load_in_8bit=False,
     torch_dtype=torch.float16,
     device_map={"": "cpu"},

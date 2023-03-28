@@ -11,7 +11,6 @@ assert (
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
 from transformers import LlamaTokenizer, LlamaForCausalLM
 
-<<<<<<< HEAD
 BASE_MODEL = None
 assert (
     BASE_MODEL
@@ -21,14 +20,6 @@ tokenizer = LlamaTokenizer.from_pretrained(BASE_MODEL)
 
 base_model = LlamaForCausalLM.from_pretrained(
     BASE_MODEL,
-=======
-tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-30b-hf",device_map={'':0})
-
-tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-30b-hf")
-
-base_model = LlamaForCausalLM.from_pretrained(
-    "decapoda-research/llama-30b-hf",
->>>>>>> 868d1be (lora 30b alpaca)
     load_in_8bit=False,
     torch_dtype=torch.float16,
     device_map={"": "cpu"},
@@ -53,8 +44,7 @@ for layer in lora_model.base_model.model.model.layers:
 lora_model.train(False)
 
 lora_model_sd = lora_model.state_dict()
-# for 30B?
-# { "dim": 6656, "multiple_of": 256, "n_heads": 52, "n_layers": 60, "norm_eps": 1e-6, "vocab_size": -1 }
+
 params = {
     "dim": 4096,
     "multiple_of": 256,
