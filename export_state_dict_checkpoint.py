@@ -11,10 +11,10 @@ assert (
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
 from transformers import LlamaTokenizer, LlamaForCausalLM
 
-tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
+tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-30b-hf")
 
 base_model = LlamaForCausalLM.from_pretrained(
-    "decapoda-research/llama-7b-hf",
+    "decapoda-research/llama-30b-hf",
     load_in_8bit=False,
     torch_dtype=torch.float16,
     device_map={"": "cpu"},
@@ -22,7 +22,7 @@ base_model = LlamaForCausalLM.from_pretrained(
 
 lora_model = PeftModel.from_pretrained(
     base_model,
-    "tloen/alpaca-lora-7b",
+    "tloen/alpaca-lora-30b",
     device_map={"": "cpu"},
     torch_dtype=torch.float16,
 )
